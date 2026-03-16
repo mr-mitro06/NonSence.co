@@ -45,6 +45,13 @@
         .backface-hidden { backface-visibility: hidden; }
         .rotate-y-180 { transform: rotateY(180deg); }
 
+        /* Pure CSS rock-solid hover flip for desktop */
+        @media (hover: hover) {
+            .group:hover .card-inner {
+                transform: rotateY(180deg);
+            }
+        }
+
         .spring-transition {
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform, opacity;
@@ -449,6 +456,7 @@
         let auth, db, currentUser = null;
 
         // Make functions globally accessible for inline HTML handlers
+        window.flipCard = flipCard;
         window.handleBuyClick = handleBuyClick;
         window.removeFromCart = removeFromCart;
         window.toggleConsent = toggleConsent;
@@ -770,12 +778,9 @@
                 const noiseSvg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
                 
                 const cardHTML = `
-                    <div class="relative w-full aspect-square md:aspect-[4/5] max-w-sm mx-auto group perspective-1500 hover-scale-card spring-transform">
-                        <!-- MOVEMENT TO FLIP MAGIC IMPLEMENTED HERE (onmouseenter/leave for Desktop, onclick for Mobile fallback) -->
-                        <div class="card-inner w-full h-full spring-transform preserve-3d cursor-pointer" 
-                             onmouseenter="this.classList.add('rotate-y-180')" 
-                             onmouseleave="this.classList.remove('rotate-y-180')" 
-                             onclick="this.classList.toggle('rotate-y-180')">
+                    <div class="relative w-full aspect-square md:aspect-[4/5] max-w-sm mx-auto group perspective-1500 hover-scale-card spring-transform" onclick="flipCard(this)">
+                        <!-- Rock-solid CSS Hover -->
+                        <div class="card-inner relative w-full h-full spring-transform preserve-3d cursor-pointer">
                             
                             <!-- FRONT FACE -->
                             <div class="absolute inset-0 backface-hidden bg-white/80 rounded-[2.5rem] md:rounded-[3rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] flex flex-col items-center justify-between p-8 overflow-hidden border border-white backdrop-blur-3xl will-change-transform">
@@ -845,6 +850,14 @@
         initFirebase();
 
         // --- INTERACTION LOGIC ---
+
+        // Only trigger JS flip on devices without hover (mobile), CSS handles desktop smoothly
+        function flipCard(el) {
+            if (window.matchMedia("(hover: none)").matches) {
+                const inner = el.querySelector('.card-inner');
+                if(inner) inner.classList.toggle('rotate-y-180');
+            }
+        }
 
         function handleBuyClick(e, productId) {
             e.stopPropagation();
