@@ -258,11 +258,11 @@
                 <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
                 The New Standard
             </div>
-            <h1 class="text-6xl md:text-8xl font-serif tracking-tighter text-black leading-[1.1]">
+            <h1 class="text-5xl sm:text-6xl md:text-8xl font-serif tracking-tighter text-black leading-[1.1]">
                 Premium <br/>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 to-slate-800 italic pr-2">absurdity.</span>
             </h1>
-            <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto font-light tracking-wide">
+            <p class="text-lg md:text-2xl text-slate-500 max-w-2xl mx-auto font-light tracking-wide px-2">
                 Meticulously engineered products that serve absolutely no logical purpose.
             </p>
         </section>
@@ -375,11 +375,11 @@
                 </button>
             </div>
 
-            <div id="cart-items" class="flex-1 overflow-y-auto p-8 flex flex-col gap-4 no-scrollbar">
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col gap-4 no-scrollbar">
                 <!-- Cart items injected here -->
             </div>
 
-            <div id="cart-footer" class="p-8 bg-white/90 border-t border-slate-100 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-b-[2.5rem] md:rounded-none hidden">
+            <div id="cart-footer" class="p-6 md:p-8 bg-white/90 border-t border-slate-100 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-b-[2.5rem] md:rounded-none hidden">
                 <div class="flex items-center justify-between mb-6">
                     <span class="text-slate-500 font-medium">Subtotal</span>
                     <span id="cart-total" class="text-3xl font-serif">$0.00</span>
@@ -430,12 +430,12 @@
     </div>
 
     <!-- Dynamic Island-style Toast -->
-    <div id="toast" class="fixed top-8 left-1/2 z-[60] toast-hidden spring-transition pointer-events-none">
-        <div class="glass-ultra bg-black/80 text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center gap-3 font-medium text-sm">
-            <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center">
+    <div id="toast" class="fixed top-8 left-1/2 z-[60] toast-hidden spring-transition pointer-events-none w-[90%] md:w-auto max-w-xs md:max-w-md">
+        <div class="glass-ultra bg-black/80 text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center gap-3 font-medium text-sm w-full justify-center md:justify-start">
+            <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0">
                 <i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i>
             </div>
-            <span id="toast-message">Added to your haul.</span>
+            <span id="toast-message" class="truncate">Added to your haul.</span>
         </div>
     </div>
 
@@ -449,7 +449,6 @@
         let auth, db, currentUser = null;
 
         // Make functions globally accessible for inline HTML handlers
-        window.flipCard = flipCard;
         window.handleBuyClick = handleBuyClick;
         window.removeFromCart = removeFromCart;
         window.toggleConsent = toggleConsent;
@@ -466,7 +465,7 @@
 
         // State
         let dumbScore = 0;
-        let cart = [];
+        let cart = JSON.parse(localStorage.getItem('nonsense_cart') || '[]'); // Initialize cart persistently
         let hasConsented = false;
         let pendingProduct = null;
         let toastTimeout;
@@ -509,24 +508,19 @@
                 const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
                 const docSnap = await getDoc(docRef);
                 
-                // Also check local storage backup just in case database read fails/is slow
                 const localBackup = localStorage.getItem('nonsense_profile_backup');
                 
                 hideLoader();
 
                 if (docSnap.exists() && docSnap.data().passed === true) {
-                    // Firebase confirms they passed!
                     userProfile = docSnap.data();
                     closeGatekeeper();
                 } else if (localBackup) {
-                    // Local backup confirms they passed!
                     userProfile = JSON.parse(localBackup);
                     closeGatekeeper();
                 } else if (docSnap.exists() && docSnap.data().passed === false) {
-                    // Blocked
                     showGateStep('gate-rejected');
                 } else {
-                    // New User
                     showGateStep('gate-step-0');
                 }
             } catch (e) {
@@ -545,7 +539,6 @@
             }
         }
 
-        // Bulletproof fallback so it doesn't bother you during testing
         function mockAuth() {
             hideLoader();
             const localBackup = localStorage.getItem('nonsense_profile_backup');
@@ -621,7 +614,6 @@
                 </div>
             `;
 
-            // Setup profile object
             const profileData = { 
                 passed: true,
                 name: name,
@@ -631,11 +623,9 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Save locally immediately to guarantee no re-prompts
             userProfile = profileData;
             localStorage.setItem('nonsense_profile_backup', JSON.stringify(profileData));
 
-            // Save to Firebase
             if (currentUser && db) {
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
@@ -669,7 +659,6 @@
             const content = document.getElementById('profile-content');
             
             if (show) {
-                // Populate data before showing
                 document.getElementById('display-name').textContent = userProfile?.name || "Unknown Entity";
                 document.getElementById('display-address').textContent = userProfile?.address || "No address provided.";
                 document.getElementById('display-regret').textContent = `"${userProfile?.regret || "Nothing, I am perfect."}"`;
@@ -691,11 +680,9 @@
         }
 
         async function resetIdentity() {
-            // Delete Local Storage
             localStorage.removeItem('nonsense_profile_backup');
             userProfile = null;
 
-            // Delete Firebase Document
             if (currentUser && db) {
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
@@ -703,7 +690,6 @@
                 } catch(e) { console.error("Could not delete from DB", e); }
             }
             
-            // Hard reload the page
             window.location.reload();
         }
 
@@ -785,7 +771,11 @@
                 
                 const cardHTML = `
                     <div class="relative w-full aspect-square md:aspect-[4/5] max-w-sm mx-auto group perspective-1500 hover-scale-card spring-transform">
-                        <div class="card-inner w-full h-full spring-transform preserve-3d cursor-pointer" onclick="flipCard(this)">
+                        <!-- MOVEMENT TO FLIP MAGIC IMPLEMENTED HERE (onmouseenter/leave for Desktop, onclick for Mobile fallback) -->
+                        <div class="card-inner w-full h-full spring-transform preserve-3d cursor-pointer" 
+                             onmouseenter="this.classList.add('rotate-y-180')" 
+                             onmouseleave="this.classList.remove('rotate-y-180')" 
+                             onclick="this.classList.toggle('rotate-y-180')">
                             
                             <!-- FRONT FACE -->
                             <div class="absolute inset-0 backface-hidden bg-white/80 rounded-[2.5rem] md:rounded-[3rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] flex flex-col items-center justify-between p-8 overflow-hidden border border-white backdrop-blur-3xl will-change-transform">
@@ -798,7 +788,7 @@
 
                                 <h2 class="text-3xl md:text-4xl font-serif text-center leading-tight tracking-tight mt-6 text-slate-900">${product.name}</h2>
 
-                                <div class="relative flex-1 flex items-center justify-center w-full mt-4 mb-4 px-4">
+                                <div class="relative flex-1 flex items-center justify-center w-full mt-4 mb-4 px-4 pointer-events-none">
                                     <div class="relative w-40 h-40 md:w-48 md:h-48 spring-transform hover-float z-10 will-change-transform bg-slate-100 rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border-[6px] border-white">
                                         <img src="${product.imageUrl}" alt="product" loading="lazy" class="absolute inset-0 w-full h-full object-cover rounded-full pointer-events-none z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                                         <div class="hidden text-7xl z-10">${product.emoji}</div>
@@ -813,7 +803,7 @@
                                         <span class="font-medium tracking-wide text-lg pointer-events-none">$${product.price.toFixed(2)}</span>
                                         <div class="absolute inset-0 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] pointer-events-none"></div>
                                     </button>
-                                    <div class="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Tap for details</div>
+                                    <div class="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Hover to reveal</div>
                                 </div>
                             </div>
 
@@ -823,18 +813,18 @@
                                 
                                 <div class="relative z-10 flex-1 flex flex-col">
                                     <div class="flex justify-between items-start mb-6">
-                                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md overflow-hidden ring-1 ring-white/20 shadow-lg relative">
+                                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md overflow-hidden ring-1 ring-white/20 shadow-lg relative pointer-events-none">
                                             <img src="${product.imageUrl}" class="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                                             <div class="hidden text-3xl z-10">${product.emoji}</div>
                                         </div>
                                         <span class="bg-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-wide text-slate-300">${product.stock}</span>
                                     </div>
 
-                                    <h3 class="text-2xl font-serif mb-2">${product.name.replace('<br/>', ' ')}</h3>
-                                    <p class="text-lg text-slate-300 font-light mb-6 italic">"${product.shortDesc}"</p>
-                                    <p class="text-sm text-slate-400 leading-relaxed flex-1">${product.longDesc}</p>
+                                    <h3 class="text-2xl font-serif mb-2 pointer-events-none">${product.name.replace('<br/>', ' ')}</h3>
+                                    <p class="text-lg text-slate-300 font-light mb-6 italic pointer-events-none">"${product.shortDesc}"</p>
+                                    <p class="text-sm text-slate-400 leading-relaxed flex-1 pointer-events-none">${product.longDesc}</p>
 
-                                    <button onclick="handleBuyClick(event, ${product.id})" class="w-full bg-white text-black py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-95 spring-transform mt-4 shadow-lg">
+                                    <button onclick="handleBuyClick(event, ${product.id})" class="relative z-20 w-full bg-white text-black py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-95 spring-transform mt-4 shadow-lg">
                                         Add to Haul — $${product.price.toFixed(2)}
                                     </button>
                                 </div>
@@ -845,6 +835,9 @@
                 grid.innerHTML += cardHTML;
             });
             lucide.createIcons();
+            
+            // On load, render the cart state immediately if it exists in local storage
+            updateCartUI(); 
         }
 
         // Initialize App
@@ -852,7 +845,6 @@
         initFirebase();
 
         // --- INTERACTION LOGIC ---
-        function flipCard(el) { el.classList.toggle('rotate-y-180'); }
 
         function handleBuyClick(e, productId) {
             e.stopPropagation();
@@ -908,6 +900,9 @@
         }
 
         function updateCartUI() {
+            // Save cart directly to local storage so it NEVER vanishes
+            localStorage.setItem('nonsense_cart', JSON.stringify(cart));
+
             const badge = document.getElementById('cart-badge');
             if (cart.length > 0) {
                 badge.textContent = cart.length;
@@ -941,11 +936,11 @@
                                 <img src="${item.imageUrl}" class="absolute inset-0 w-full h-full object-cover z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                                 <div class="hidden text-3xl z-10">${item.emoji}</div>
                             </div>
-                            <div class="flex-1">
-                                <h4 class="font-serif text-lg leading-tight">${item.name.replace('<br/>', ' ')}</h4>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-serif text-lg leading-tight truncate">${item.name.replace('<br/>', ' ')}</h4>
                                 <p class="text-slate-500 font-medium">$${item.price.toFixed(2)}</p>
                             </div>
-                            <button onclick="removeFromCart(${index})" class="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors active:scale-90">
+                            <button onclick="removeFromCart(${index})" class="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors active:scale-90 flex-shrink-0">
                                 <i data-lucide="trash-2" class="w-5 h-5"></i>
                             </button>
                         </div>
@@ -1035,6 +1030,8 @@
                 setTimeout(() => document.getElementById('success-btn').classList.add('opacity-100'), 650);
                 
                 fireConfetti();
+                
+                // Clear the cart completely upon checkout success
                 cart = [];
                 updateCartUI();
             }, 4500);
