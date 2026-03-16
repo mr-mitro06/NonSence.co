@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nonsense OS | Pro level absurdity</title>
+    <title>NonSence.Co | Premium Absurdity</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,25 +33,21 @@
     </script>
 
     <style>
-        /* * ULTRA SMOOTH 120HZ ANIMATION UTILITIES 
-         * Utilizing GPU acceleration and Apple-style cubic-bezier springs
-         */
+        /* * ULTRA SMOOTH 120HZ ANIMATION UTILITIES */
         body {
             background-color: #f2f2f7;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* 3D Flip Utilities */
         .perspective-1500 { perspective: 1500px; }
         .preserve-3d { transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; }
         .rotate-y-180 { transform: rotateY(180deg); }
 
-        /* Butter-smooth transition physics */
         .spring-transition {
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform;
+            will-change: transform, opacity;
         }
         
         .spring-transform {
@@ -63,7 +59,6 @@
             transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Hover effects - forced hardware acceleration */
         .hover-float:hover {
             transform: translate3d(0, -8px, 0) scale(1.05);
         }
@@ -72,11 +67,9 @@
             transform: scale(1.02) translate3d(0, 0, 0);
         }
 
-        /* Hide scrollbar but keep functionality for cart */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Modals & Overlays state classes */
         .modal-hidden { opacity: 0; pointer-events: none; }
         .modal-visible { opacity: 1; pointer-events: auto; }
         
@@ -92,9 +85,112 @@
 
         .toast-hidden { transform: translate3d(-50%, -20px, 0) scale(0.9); opacity: 0; }
         .toast-visible { transform: translate3d(-50%, 0, 0) scale(1); opacity: 1; }
+        
+        /* Glassmorphism Ultra Blur */
+        .glass-ultra {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 <body class="text-slate-900 selection:bg-black selection:text-white pb-20 overflow-x-hidden">
+
+    <!-- GATEKEEPER (LOGIN / QUESTIONNAIRE) OVERLAY -->
+    <div id="gatekeeper-overlay" class="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-[#f2f2f7]/90 backdrop-blur-3xl transition-opacity duration-1000 modal-visible">
+        
+        <!-- Loading Spinner -->
+        <div id="gate-loading" class="absolute inset-0 flex flex-col items-center justify-center z-[210] transition-opacity duration-500">
+            <div class="w-12 h-12 border-4 border-slate-200 border-t-black rounded-full animate-spin"></div>
+            <p class="mt-4 text-slate-500 font-medium">Authenticating Identity...</p>
+        </div>
+
+        <!-- Glass Card container -->
+        <div id="gate-container" class="relative w-full max-w-md glass-ultra rounded-[3rem] shadow-2xl overflow-hidden flex flex-col items-center p-8 text-center modal-content-hidden fade-spring transition-all duration-700">
+            
+            <!-- Step 0: Intro -->
+            <div id="gate-step-0" class="w-full flex flex-col items-center">
+                <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-black to-slate-800 text-white flex items-center justify-center font-serif italic font-bold text-4xl shadow-xl mb-6">
+                    N
+                </div>
+                <h2 class="text-3xl font-serif text-black mb-3">NonSence.Co</h2>
+                <p class="text-slate-500 mb-8 leading-relaxed px-2">
+                    Exclusive access for individuals lacking common sense. We must verify your level of intelligence before entry.
+                </p>
+                <button onclick="nextGateStep(1)" class="w-full py-4 bg-black text-white rounded-2xl font-medium shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                    Begin Verification
+                </button>
+            </div>
+
+            <!-- Step 1: Question 1 -->
+            <div id="gate-step-1" class="w-full flex flex-col hidden">
+                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-2">Question 1</span>
+                <h3 class="text-2xl font-serif text-black mb-8 leading-tight">How rich are you?</h3>
+                
+                <div class="flex flex-col gap-3 w-full">
+                    <button onclick="recordAnswer(1, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        A) I use iPads as drink coasters.
+                    </button>
+                    <button onclick="recordAnswer(1, 0)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        B) I have a sensible 401k savings plan.
+                    </button>
+                    <button onclick="recordAnswer(1, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        C) I pay people to breathe for me.
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Question 2 -->
+            <div id="gate-step-2" class="w-full flex flex-col hidden">
+                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-2">Question 2</span>
+                <h3 class="text-2xl font-serif text-black mb-8 leading-tight">Where did you leave your brain?</h3>
+                
+                <div class="flex flex-col gap-3 w-full">
+                    <button onclick="recordAnswer(2, 0)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        A) It is currently processing this logic.
+                    </button>
+                    <button onclick="recordAnswer(2, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        B) I traded it for a magic bean.
+                    </button>
+                    <button onclick="recordAnswer(2, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        C) Left it in my other pants.
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Rejected -->
+            <div id="gate-rejected" class="w-full flex flex-col items-center hidden">
+                <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6">
+                    <i data-lucide="shield-off" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-serif text-black mb-3">Access Denied</h3>
+                <p class="text-slate-500 mb-8 leading-relaxed">
+                    You exhibit signs of critical thinking and financial responsibility. Go do your taxes. Come back when you're dumb.
+                </p>
+                <button onclick="window.location.reload()" class="w-full py-4 bg-slate-200 text-slate-700 rounded-2xl font-medium hover:bg-slate-300 transition-all active:scale-95">
+                    Leave
+                </button>
+            </div>
+
+            <!-- Step 4: Approved -->
+            <div id="gate-approved" class="w-full flex flex-col items-center hidden">
+                <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6">
+                    <i data-lucide="check-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-serif text-black mb-3">Verification Complete</h3>
+                <p class="text-slate-500 mb-8 leading-relaxed">
+                    Zero brain cells detected. You are the perfect customer. Welcome to NonSence.Co.
+                </p>
+                <button onclick="finishGatekeeper()" class="w-full py-4 bg-black text-white rounded-2xl font-medium shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                    Enter Store
+                </button>
+            </div>
+
+        </div>
+    </div>
+
 
     <!-- Header -->
     <header id="header" class="fixed top-0 w-full z-40 py-6 transition-all duration-500 ease-out will-change-[background-color,backdrop-filter,padding]">
@@ -104,11 +200,11 @@
                     N
                 </div>
                 <span id="header-title" class="font-medium tracking-tight opacity-0 md:opacity-100 transition-opacity duration-500">
-                    Nonsense OS
+                    NonSence.Co
                 </span>
             </div>
             
-            <button onclick="toggleCart(true)" class="relative bg-white/50 backdrop-blur-md border border-black/5 p-3 rounded-full hover:bg-white transition-colors shadow-sm active:scale-95 spring-transform">
+            <button onclick="toggleCart(true)" class="relative glass-ultra p-3 rounded-full hover:bg-white/80 transition-colors shadow-sm active:scale-95 spring-transform">
                 <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                 <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-black text-white text-[11px] font-bold rounded-full flex items-center justify-center ring-2 ring-[#f2f2f7] hidden transition-transform spring-transform">
                     0
@@ -121,12 +217,12 @@
     <main class="pt-32 px-4 max-w-7xl mx-auto">
         <!-- Hero Section -->
         <section class="text-center space-y-8 mb-20 md:mb-32 px-4 fade-spring modal-content-visible">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 border border-black/5 text-sm font-medium text-slate-600 mb-4">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-white shadow-sm text-sm font-medium text-slate-600 mb-4 backdrop-blur-md">
                 <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
-                Introducing Version 2.0
+                The New Standard
             </div>
             <h1 class="text-6xl md:text-8xl font-serif tracking-tighter text-black leading-[1.1]">
-                Pro level <br/>
+                Premium <br/>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 to-slate-800 italic pr-2">absurdity.</span>
             </h1>
             <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto font-light tracking-wide">
@@ -140,22 +236,20 @@
         </section>
     </main>
 
-    <!-- MODALS & OVERLAYS -->
-
     <!-- Terms Modal -->
     <div id="consent-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 modal-hidden transition-opacity duration-500">
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xl" onclick="toggleConsent(false)"></div>
         
-        <div id="consent-content" class="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] modal-content-hidden fade-spring">
-            <div class="p-8 pb-6 flex-shrink-0 flex flex-col items-center text-center border-b border-black/5">
-                <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+        <div id="consent-content" class="relative w-full max-w-lg glass-ultra rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] modal-content-hidden fade-spring border border-white/60">
+            <div class="p-8 pb-6 flex-shrink-0 flex flex-col items-center text-center border-b border-black/5 bg-white/40">
+                <div class="w-16 h-16 bg-red-50/80 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-inner backdrop-blur-md">
                     <i data-lucide="fingerprint" class="w-8 h-8"></i>
                 </div>
                 <h3 class="text-3xl font-serif text-black mb-2">Terms & Reality</h3>
                 <p class="text-slate-500">Please review before wasting your money.</p>
             </div>
             
-            <div class="p-8 overflow-y-auto flex-1 text-sm text-slate-600 space-y-6 no-scrollbar">
+            <div class="p-8 overflow-y-auto flex-1 text-sm text-slate-600 space-y-6 no-scrollbar bg-white/40">
                 <p class="font-medium text-black">By tapping "I Accept", you formally acknowledge the following universal truths:</p>
                 <div class="space-y-4">
                     <div class="flex gap-4">
@@ -173,8 +267,8 @@
                 </div>
             </div>
 
-            <div class="p-6 pt-4 bg-slate-50 border-t border-black/5 flex flex-col sm:flex-row gap-3 flex-shrink-0">
-                <button onclick="toggleConsent(false)" class="w-full sm:w-1/2 py-4 px-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-medium hover:bg-slate-50 transition-colors active:scale-95 spring-transform">
+            <div class="p-6 pt-4 bg-white/60 border-t border-white/50 flex flex-col sm:flex-row gap-3 flex-shrink-0">
+                <button onclick="toggleConsent(false)" class="w-full sm:w-1/2 py-4 px-4 bg-white/80 border border-slate-200 text-slate-700 rounded-2xl font-medium hover:bg-white transition-colors active:scale-95 spring-transform">
                     Cancel
                 </button>
                 <button onclick="acceptConsent()" class="w-full sm:w-1/2 py-4 px-4 bg-black text-white rounded-2xl font-medium shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 hover:scale-105 spring-transform">
@@ -188,15 +282,15 @@
     <div id="cart-overlay" class="fixed inset-0 z-50 flex justify-end modal-hidden transition-opacity duration-500">
         <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-md" onclick="toggleCart(false)"></div>
         
-        <div id="cart-sidebar" class="relative w-full max-w-md h-[90vh] mt-auto md:mt-0 md:h-full bg-white rounded-t-[2.5rem] md:rounded-none md:rounded-l-[2.5rem] shadow-2xl flex flex-col cart-hidden spring-transition">
+        <div id="cart-sidebar" class="relative w-full max-w-md h-[90vh] mt-auto md:mt-0 md:h-full glass-ultra rounded-t-[2.5rem] md:rounded-none md:rounded-l-[2.5rem] shadow-2xl flex flex-col cart-hidden spring-transition bg-white/80 border-l border-white/50">
             <!-- Mobile drag handle -->
             <div class="w-full flex justify-center pt-4 pb-2 md:hidden">
-                <div class="w-12 h-1.5 bg-slate-200 rounded-full"></div>
+                <div class="w-12 h-1.5 bg-slate-300/50 rounded-full"></div>
             </div>
 
             <div class="px-8 py-6 border-b border-black/5 flex items-center justify-between">
                 <h3 class="text-2xl font-serif">Your Haul</h3>
-                <button onclick="toggleCart(false)" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors active:scale-90 spring-transform">
+                <button onclick="toggleCart(false)" class="p-2 bg-slate-200/50 rounded-full hover:bg-slate-200 transition-colors active:scale-90 spring-transform">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -205,7 +299,7 @@
                 <!-- Cart items injected here -->
             </div>
 
-            <div id="cart-footer" class="p-8 bg-white border-t border-slate-100 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-b-[2.5rem] md:rounded-none hidden">
+            <div id="cart-footer" class="p-8 bg-white/90 border-t border-slate-100 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-b-[2.5rem] md:rounded-none hidden">
                 <div class="flex items-center justify-between mb-6">
                     <span class="text-slate-500 font-medium">Subtotal</span>
                     <span id="cart-total" class="text-3xl font-serif">$0.00</span>
@@ -252,13 +346,12 @@
                     Back to Reality
                 </button>
             </div>
-
         </div>
     </div>
 
     <!-- Dynamic Island-style Toast -->
     <div id="toast" class="fixed top-8 left-1/2 z-[60] toast-hidden spring-transition pointer-events-none">
-        <div class="bg-black text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center gap-3 font-medium text-sm border border-white/10">
+        <div class="glass-ultra bg-black/80 text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center gap-3 font-medium text-sm">
             <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center">
                 <i data-lucide="check" class="w-3.5 h-3.5 text-green-400"></i>
             </div>
@@ -266,8 +359,154 @@
         </div>
     </div>
 
-    <script>
-        // --- DATA (UPDATED WITH ROBUST IMAGES & EMOJI FALLBACKS) ---
+    <!-- Firebase Logic & Application Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let auth, db, currentUser = null;
+
+        // Make functions globally accessible for inline HTML handlers
+        window.flipCard = flipCard;
+        window.handleBuyClick = handleBuyClick;
+        window.removeFromCart = removeFromCart;
+        window.toggleConsent = toggleConsent;
+        window.acceptConsent = acceptConsent;
+        window.toggleCart = toggleCart;
+        window.checkout = checkout;
+        window.closePayment = closePayment;
+        window.nextGateStep = nextGateStep;
+        window.recordAnswer = recordAnswer;
+        window.finishGatekeeper = finishGatekeeper;
+
+        // State
+        let dumbScore = 0;
+        let cart = [];
+        let hasConsented = false;
+        let pendingProduct = null;
+        let toastTimeout;
+
+        // Init Firebase & Auth
+        async function initFirebase() {
+            if (typeof __firebase_config !== 'undefined') {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            currentUser = user;
+                            await checkUserStatus(user);
+                        }
+                    });
+                } catch (e) {
+                    console.error("Auth error", e);
+                    mockAuth(); // Fallback if auth fails
+                }
+            } else {
+                console.warn("Firebase config not found. Running locally.");
+                mockAuth();
+            }
+        }
+
+        async function checkUserStatus(user) {
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile');
+                const docSnap = await getDoc(docRef);
+                
+                hideLoader();
+
+                if (docSnap.exists() && docSnap.data().passed === true) {
+                    // Already passed previously!
+                    closeGatekeeper();
+                } else if (docSnap.exists() && docSnap.data().passed === false) {
+                    // Blocked
+                    showGateStep('gate-rejected');
+                } else {
+                    // New User
+                    showGateStep('gate-step-0');
+                }
+            } catch (e) {
+                console.error("Firestore read error", e);
+                mockAuth();
+            }
+        }
+
+        async function saveUserStatus(passed) {
+            if (!currentUser || !db) return;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile');
+                await setDoc(docRef, { passed: passed });
+            } catch (e) {
+                console.error("Firestore write error", e);
+            }
+        }
+
+        function mockAuth() {
+            hideLoader();
+            showGateStep('gate-step-0');
+        }
+
+        // Gatekeeper Navigation
+        function hideLoader() {
+            document.getElementById('gate-loading').classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                const container = document.getElementById('gate-container');
+                container.classList.remove('modal-content-hidden');
+                container.classList.add('modal-content-visible');
+            }, 300);
+        }
+
+        function showGateStep(stepId) {
+            ['gate-step-0', 'gate-step-1', 'gate-step-2', 'gate-rejected', 'gate-approved'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(stepId).classList.remove('hidden');
+        }
+
+        function nextGateStep(step) {
+            showGateStep(`gate-step-${step}`);
+        }
+
+        function recordAnswer(questionNum, score) {
+            dumbScore += score;
+            if (questionNum === 1) {
+                nextGateStep(2);
+            } else if (questionNum === 2) {
+                if (dumbScore >= 2) {
+                    saveUserStatus(true);
+                    showGateStep('gate-approved');
+                } else {
+                    saveUserStatus(false);
+                    showGateStep('gate-rejected');
+                }
+            }
+        }
+
+        function finishGatekeeper() {
+            closeGatekeeper();
+        }
+
+        function closeGatekeeper() {
+            const overlay = document.getElementById('gatekeeper-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 1000);
+        }
+
+
+        // --- PRODUCT DATA & RENDERING ---
         const PRODUCTS = [
             {
                 id: 1,
@@ -319,7 +558,7 @@
                 price: 9999.00,
                 shortDesc: "Literally nothing.",
                 longDesc: "We guarantee you won't see it when it arrives. If the box appears empty, it means it's working perfectly. No refunds for lost cloaks.",
-                imageUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", // Transparent pixel
+                imageUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
                 emoji: "🧥",
                 glow: "shadow-purple-500/40",
                 stock: "We can't find them"
@@ -337,99 +576,87 @@
             }
         ];
 
-        // --- STATE ---
-        let cart = [];
-        let hasConsented = false;
-        let pendingProduct = null;
-        let toastTimeout;
-
-        // --- RENDER PRODUCTS ---
-        const grid = document.getElementById('product-grid');
-        
-        PRODUCTS.forEach(product => {
-            const noiseSvg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
-            
-            const cardHTML = `
-                <div class="relative w-full aspect-square md:aspect-[4/5] max-w-sm mx-auto group perspective-1500 hover-scale-card spring-transform">
-                    <div class="card-inner w-full h-full spring-transform preserve-3d cursor-pointer" onclick="flipCard(this)">
-                        
-                        <!-- FRONT FACE -->
-                        <div class="absolute inset-0 backface-hidden bg-white rounded-[2.5rem] md:rounded-[3rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] flex flex-col items-center justify-between p-8 overflow-hidden border border-slate-100 will-change-transform">
-                            <!-- iOS top indicator -->
-                            <div class="flex gap-1.5 mt-2">
-                                <div class="w-4 h-1 bg-black rounded-full"></div>
-                                <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
-                                <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
-                                <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
-                            </div>
-
-                            <h2 class="text-3xl md:text-4xl font-serif text-center leading-tight tracking-tight mt-6 text-slate-900">${product.name}</h2>
-
-                            <!-- Real Product Image Visual (WITH FALLBACK) -->
-                            <div class="relative flex-1 flex items-center justify-center w-full mt-6 mb-8 px-4">
-                                <div class="relative w-40 h-40 md:w-48 md:h-48 spring-transform hover-float z-10 will-change-transform bg-slate-100 rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border-[6px] border-white">
-                                    <img src="${product.imageUrl}" alt="product" loading="lazy" 
-                                         class="absolute inset-0 w-full h-full object-cover rounded-full pointer-events-none z-20" 
-                                         onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                                    <!-- Fallback Emoji if image blocked -->
-                                    <div class="hidden text-7xl z-10">${product.emoji}</div>
-                                    <div class="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5 pointer-events-none z-30"></div>
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            PRODUCTS.forEach(product => {
+                const noiseSvg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
+                
+                // Fixed layout: Removed absolute bottom positioning for "Tap for details" to prevent overlap with button.
+                const cardHTML = `
+                    <div class="relative w-full aspect-square md:aspect-[4/5] max-w-sm mx-auto group perspective-1500 hover-scale-card spring-transform">
+                        <div class="card-inner w-full h-full spring-transform preserve-3d cursor-pointer" onclick="flipCard(this)">
+                            
+                            <!-- FRONT FACE -->
+                            <div class="absolute inset-0 backface-hidden bg-white/80 rounded-[2.5rem] md:rounded-[3rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] flex flex-col items-center justify-between p-8 overflow-hidden border border-white backdrop-blur-3xl will-change-transform">
+                                <div class="flex gap-1.5 mt-2">
+                                    <div class="w-4 h-1 bg-black rounded-full"></div>
+                                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
+                                    <div class="w-1 h-1 bg-slate-300 rounded-full"></div>
                                 </div>
-                                <div class="absolute -bottom-6 w-32 md:w-40 h-8 bg-black/20 blur-xl rounded-full ${product.glow} spring-transition"></div>
-                            </div>
 
-                            <!-- Button -->
-                            <button onclick="handleBuyClick(event, ${product.id})" class="relative z-20 mb-4 bg-gradient-to-b from-neutral-800 to-black text-white px-6 py-3.5 rounded-full flex items-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 spring-transform border border-neutral-700/50 backdrop-blur-xl">
-                                <i data-lucide="shopping-cart" class="w-5 h-5 text-neutral-300 pointer-events-none"></i>
-                                <span class="font-medium tracking-wide text-lg pointer-events-none">$${product.price.toFixed(2)}</span>
-                                <div class="absolute inset-0 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] pointer-events-none"></div>
-                            </button>
-                            
-                            <div class="absolute bottom-4 text-xs text-slate-400 font-medium tracking-widest uppercase">Tap for details</div>
-                        </div>
+                                <h2 class="text-3xl md:text-4xl font-serif text-center leading-tight tracking-tight mt-6 text-slate-900">${product.name}</h2>
 
-                        <!-- BACK FACE -->
-                        <div class="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 text-white rounded-[2.5rem] md:rounded-[3rem] shadow-2xl p-8 flex flex-col border border-slate-700 overflow-hidden will-change-transform">
-                            <div class="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style='background-image: ${noiseSvg}'></div>
-                            
-                            <div class="relative z-10 flex-1 flex flex-col">
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md overflow-hidden ring-1 ring-white/20 shadow-lg relative">
-                                        <img src="${product.imageUrl}" class="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                                        <div class="hidden text-3xl z-10">${product.emoji}</div>
+                                <div class="relative flex-1 flex items-center justify-center w-full mt-4 mb-4 px-4">
+                                    <div class="relative w-40 h-40 md:w-48 md:h-48 spring-transform hover-float z-10 will-change-transform bg-slate-100 rounded-full flex items-center justify-center shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] border-[6px] border-white">
+                                        <img src="${product.imageUrl}" alt="product" loading="lazy" class="absolute inset-0 w-full h-full object-cover rounded-full pointer-events-none z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                                        <div class="hidden text-7xl z-10">${product.emoji}</div>
+                                        <div class="absolute inset-0 rounded-full ring-1 ring-inset ring-black/5 pointer-events-none z-30"></div>
                                     </div>
-                                    <span class="bg-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-wide text-slate-300">${product.stock}</span>
+                                    <div class="absolute -bottom-6 w-32 md:w-40 h-8 bg-black/20 blur-xl rounded-full ${product.glow} spring-transition"></div>
                                 </div>
 
-                                <h3 class="text-2xl font-serif mb-2">${product.name.replace('<br/>', ' ')}</h3>
-                                <p class="text-lg text-slate-300 font-light mb-6 italic">"${product.shortDesc}"</p>
-                                <p class="text-sm text-slate-400 leading-relaxed flex-1">${product.longDesc}</p>
+                                <!-- Action Stack (No overlap fix) -->
+                                <div class="mt-auto pt-2 w-full flex flex-col items-center gap-3">
+                                    <button onclick="handleBuyClick(event, ${product.id})" class="relative z-20 w-full max-w-[220px] bg-gradient-to-b from-neutral-800 to-black text-white px-6 py-4 rounded-full flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 spring-transform border border-neutral-700/50 backdrop-blur-xl">
+                                        <i data-lucide="shopping-cart" class="w-5 h-5 text-neutral-300 pointer-events-none"></i>
+                                        <span class="font-medium tracking-wide text-lg pointer-events-none">$${product.price.toFixed(2)}</span>
+                                        <div class="absolute inset-0 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] pointer-events-none"></div>
+                                    </button>
+                                    <div class="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">Tap for details</div>
+                                </div>
+                            </div>
 
-                                <button onclick="handleBuyClick(event, ${product.id})" class="w-full bg-white text-black py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-95 spring-transform mt-4">
-                                    Add to Haul — $${product.price.toFixed(2)}
-                                </button>
+                            <!-- BACK FACE -->
+                            <div class="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900/95 backdrop-blur-3xl text-white rounded-[2.5rem] md:rounded-[3rem] shadow-2xl p-8 flex flex-col border border-slate-700 overflow-hidden will-change-transform">
+                                <div class="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style='background-image: ${noiseSvg}'></div>
+                                
+                                <div class="relative z-10 flex-1 flex flex-col">
+                                    <div class="flex justify-between items-start mb-6">
+                                        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md overflow-hidden ring-1 ring-white/20 shadow-lg relative">
+                                            <img src="${product.imageUrl}" class="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                                            <div class="hidden text-3xl z-10">${product.emoji}</div>
+                                        </div>
+                                        <span class="bg-white/10 px-3 py-1 rounded-full text-xs font-medium tracking-wide text-slate-300">${product.stock}</span>
+                                    </div>
+
+                                    <h3 class="text-2xl font-serif mb-2">${product.name.replace('<br/>', ' ')}</h3>
+                                    <p class="text-lg text-slate-300 font-light mb-6 italic">"${product.shortDesc}"</p>
+                                    <p class="text-sm text-slate-400 leading-relaxed flex-1">${product.longDesc}</p>
+
+                                    <button onclick="handleBuyClick(event, ${product.id})" class="w-full bg-white text-black py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-95 spring-transform mt-4 shadow-lg">
+                                        Add to Haul — $${product.price.toFixed(2)}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-
                     </div>
-                </div>
-            `;
-            grid.innerHTML += cardHTML;
-        });
-
-        // Initialize Icons for dynamically added HTML
-        lucide.createIcons();
-
-        // --- LOGIC ---
-
-        function flipCard(el) {
-            el.classList.toggle('rotate-y-180');
+                `;
+                grid.innerHTML += cardHTML;
+            });
+            lucide.createIcons();
         }
 
+        // Initialize App
+        renderProducts();
+        initFirebase();
+
+        // --- INTERACTION LOGIC ---
+        function flipCard(el) { el.classList.toggle('rotate-y-180'); }
+
         function handleBuyClick(e, productId) {
-            e.stopPropagation(); // Prevent card from flipping
+            e.stopPropagation();
             const product = PRODUCTS.find(p => p.id === productId);
-            
             if (!hasConsented) {
                 pendingProduct = product;
                 toggleConsent(true);
@@ -465,7 +692,7 @@
                 setTimeout(() => {
                     modal.classList.remove('modal-visible');
                     modal.classList.add('modal-hidden');
-                }, 300); // Wait for inner animation
+                }, 300);
             }
         }
 
@@ -476,24 +703,21 @@
                 setTimeout(() => {
                     addToCart(pendingProduct);
                     pendingProduct = null;
-                }, 300); // Add after modal closes
+                }, 300);
             }
         }
 
         function updateCartUI() {
-            // Update Badge
             const badge = document.getElementById('cart-badge');
             if (cart.length > 0) {
                 badge.textContent = cart.length;
                 badge.classList.remove('hidden');
-                // Pop animation
                 badge.style.transform = 'scale(1.5)';
                 setTimeout(() => badge.style.transform = 'scale(1)', 150);
             } else {
                 badge.classList.add('hidden');
             }
 
-            // Update Sidebar Items
             const itemsContainer = document.getElementById('cart-items');
             const footer = document.getElementById('cart-footer');
             const totalEl = document.getElementById('cart-total');
@@ -512,7 +736,7 @@
                 cart.forEach((item, index) => {
                     total += item.price;
                     html += `
-                        <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 spring-transform hover:-translate-y-1 group">
+                        <div class="flex items-center gap-4 bg-white/50 p-4 rounded-2xl border border-white/60 spring-transform hover:-translate-y-1 group shadow-sm">
                             <div class="w-16 h-16 rounded-xl bg-slate-200 shadow-md flex items-center justify-center overflow-hidden ring-1 ring-black/5 flex-shrink-0 relative">
                                 <img src="${item.imageUrl}" class="absolute inset-0 w-full h-full object-cover z-20" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                                 <div class="hidden text-3xl z-10">${item.emoji}</div>
@@ -521,7 +745,7 @@
                                 <h4 class="font-serif text-lg leading-tight">${item.name.replace('<br/>', ' ')}</h4>
                                 <p class="text-slate-500 font-medium">$${item.price.toFixed(2)}</p>
                             </div>
-                            <button onclick="removeFromCart(${index})" class="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors active:scale-90" title="Remove item">
+                            <button onclick="removeFromCart(${index})" class="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors active:scale-90">
                                 <i data-lucide="trash-2" class="w-5 h-5"></i>
                             </button>
                         </div>
@@ -538,7 +762,7 @@
             const overlay = document.getElementById('cart-overlay');
             const sidebar = document.getElementById('cart-sidebar');
             if (show) {
-                updateCartUI(); // Ensure it's up to date
+                updateCartUI();
                 overlay.classList.remove('modal-hidden');
                 overlay.classList.add('modal-visible');
                 setTimeout(() => {
@@ -551,41 +775,32 @@
                 setTimeout(() => {
                     overlay.classList.remove('modal-visible');
                     overlay.classList.add('modal-hidden');
-                }, 400); // Match transition duration
+                }, 400);
             }
         }
 
-        // --- PAYMENT & FUN EFFECTS ---
-
         function checkout() {
-            // Close Cart
             toggleCart(false);
-            
-            // Setup & Show Payment Modal
             const modal = document.getElementById('payment-modal');
             const loading = document.getElementById('payment-loading');
             const success = document.getElementById('payment-success');
             const funnyText = document.getElementById('funny-loading-text');
 
-            // Reset visibility states
             loading.classList.remove('hidden');
             loading.classList.add('flex');
             success.classList.remove('flex');
             success.classList.add('hidden');
             
-            // Reset animations
-            document.getElementById('success-tick').classList.remove('scale-100');
-            document.getElementById('success-tick').classList.add('scale-0');
-            document.getElementById('success-title').classList.remove('opacity-100');
-            document.getElementById('success-desc').classList.remove('opacity-100');
-            document.getElementById('success-btn').classList.remove('opacity-100');
+            ['success-tick', 'success-title', 'success-desc', 'success-btn'].forEach(id => {
+                document.getElementById(id).classList.remove('scale-100', 'opacity-100');
+                if(id === 'success-tick') document.getElementById(id).classList.add('scale-0');
+            });
 
             setTimeout(() => {
                 modal.classList.remove('modal-hidden');
                 modal.classList.add('modal-visible');
-            }, 400); // Wait for cart to close
+            }, 400);
 
-            // Funny messages sequence
             const messages = [
                 "Validating poor life choices...",
                 "Contacting the void...",
@@ -599,7 +814,6 @@
             const msgInterval = setInterval(() => {
                 msgIndex++;
                 if(msgIndex < messages.length) {
-                    // Fade text out/in
                     funnyText.style.opacity = '0';
                     setTimeout(() => {
                         funnyText.textContent = messages[msgIndex];
@@ -608,26 +822,19 @@
                 }
             }, 800);
 
-            // Trigger Success
             setTimeout(() => {
                 clearInterval(msgInterval);
-                
                 loading.classList.remove('flex');
                 loading.classList.add('hidden');
-                
                 success.classList.remove('hidden');
                 success.classList.add('flex');
                 
-                // Animate success elements sequentially
                 setTimeout(() => document.getElementById('success-tick').classList.add('scale-100'), 50);
                 setTimeout(() => document.getElementById('success-title').classList.add('opacity-100'), 250);
                 setTimeout(() => document.getElementById('success-desc').classList.add('opacity-100'), 450);
                 setTimeout(() => document.getElementById('success-btn').classList.add('opacity-100'), 650);
                 
-                // CONFETTI!
                 fireConfetti();
-                
-                // Clear the actual cart behind the scenes
                 cart = [];
                 updateCartUI();
             }, 4500);
@@ -639,59 +846,34 @@
             modal.classList.add('modal-hidden');
         }
 
-        // Custom JS Confetti Cannon
         function fireConfetti() {
-            for(let i=0; i<80; i++) {
-                createConfettiPiece();
-            }
+            for(let i=0; i<80; i++) createConfettiPiece();
         }
 
         function createConfettiPiece() {
             const colors = ['#fce18a', '#ff726d', '#b48def', '#f4306d', '#4ade80', '#38bdf8'];
             const piece = document.createElement('div');
-            
-            piece.style.position = 'fixed';
-            piece.style.width = (Math.random() * 8 + 6) + 'px';
-            piece.style.height = (Math.random() * 12 + 8) + 'px';
-            piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            piece.style.top = '50%';
-            piece.style.left = '50%';
-            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-            piece.style.pointerEvents = 'none';
-            piece.style.zIndex = '200';
-            
+            piece.style.cssText = `
+                position: fixed; width: ${Math.random() * 8 + 6}px; height: ${Math.random() * 12 + 8}px;
+                background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+                top: 50%; left: 50%; border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                pointer-events: none; z-index: 200;
+            `;
             document.body.appendChild(piece);
             
-            // Physics
             const angle = Math.random() * Math.PI * 2;
             const velocity = 15 + Math.random() * 20;
             let vx = Math.cos(angle) * velocity;
-            let vy = Math.sin(angle) * velocity - 15; // Initial upward burst
-            
-            let x = 0;
-            let y = 0;
-            let rot = Math.random() * 360;
-            let rotSpeed = (Math.random() - 0.5) * 20;
-            let opacity = 1;
+            let vy = Math.sin(angle) * velocity - 15;
+            let x = 0, y = 0, rot = Math.random() * 360, rotSpeed = (Math.random() - 0.5) * 20, opacity = 1;
             
             function animateConfetti() {
-                x += vx;
-                y += vy;
-                vy += 0.8; // Gravity
-                vx *= 0.98; // Friction
-                rot += rotSpeed;
-                
-                // Start fading out after dropping a bit
+                x += vx; y += vy; vy += 0.8; vx *= 0.98; rot += rotSpeed;
                 if (vy > 5) opacity -= 0.02;
-                
                 piece.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${rot}deg)`;
                 piece.style.opacity = opacity;
-                
-                if(opacity > 0 && y < window.innerHeight) {
-                    requestAnimationFrame(animateConfetti);
-                } else {
-                    piece.remove();
-                }
+                if(opacity > 0 && y < window.innerHeight) requestAnimationFrame(animateConfetti);
+                else piece.remove();
             }
             requestAnimationFrame(animateConfetti);
         }
@@ -699,12 +881,9 @@
         function showToast(message) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = message;
-            
             clearTimeout(toastTimeout);
-            
             toast.classList.remove('toast-hidden');
             toast.classList.add('toast-visible');
-            
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('toast-visible');
                 toast.classList.add('toast-hidden');
@@ -714,31 +893,24 @@
         // --- SCROLL EFFECTS ---
         const header = document.getElementById('header');
         const headerTitle = document.getElementById('header-title');
-        
-        // Use requestAnimationFrame for 120hz smooth scroll tracking
         let ticking = false;
         window.addEventListener('scroll', () => {
             if (!ticking) {
                 window.requestAnimationFrame(() => {
                     if (window.scrollY > 20) {
-                        header.classList.add('bg-white/70', 'backdrop-blur-2xl', 'border-b', 'border-black/5', 'py-3');
+                        header.classList.add('bg-white/70', 'backdrop-blur-2xl', 'border-b', 'border-white/50', 'py-3');
                         header.classList.remove('py-6', 'bg-transparent');
                         headerTitle.classList.remove('opacity-0');
                     } else {
-                        header.classList.remove('bg-white/70', 'backdrop-blur-2xl', 'border-b', 'border-black/5', 'py-3');
+                        header.classList.remove('bg-white/70', 'backdrop-blur-2xl', 'border-b', 'border-white/50', 'py-3');
                         header.classList.add('py-6', 'bg-transparent');
-                        if(window.innerWidth < 768) {
-                            headerTitle.classList.add('opacity-0');
-                        }
+                        if(window.innerWidth < 768) headerTitle.classList.add('opacity-0');
                     }
                     ticking = false;
                 });
                 ticking = true;
             }
         }, { passive: true });
-
-        // Initial setup
-        updateCartUI();
 
     </script>
 </body>
