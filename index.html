@@ -181,11 +181,40 @@
                 </div>
                 <h3 class="text-2xl font-serif text-black mb-3">Verification Complete</h3>
                 <p class="text-slate-500 mb-8 leading-relaxed">
-                    Zero brain cells detected. You are the perfect customer. Welcome to NonSence.Co.
+                    Zero brain cells detected. You are the perfect customer. Proceed to profile setup.
                 </p>
-                <button onclick="finishGatekeeper()" class="w-full py-4 bg-black text-white rounded-2xl font-medium shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
-                    Enter Store
+                <button onclick="nextGateStep('profile')" class="w-full py-4 bg-black text-white rounded-2xl font-medium shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                    Set Up Profile
                 </button>
+            </div>
+
+            <!-- Step 5: Profile Creation -->
+            <div id="gate-step-profile" class="w-full flex flex-col hidden text-left">
+                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-2">Final Step</span>
+                <h3 class="text-2xl font-serif text-black mb-6">Who do we sue?</h3>
+                
+                <p id="prof-error" class="text-red-500 text-sm font-medium mb-4 hidden bg-red-50 p-3 rounded-xl border border-red-100"></p>
+
+                <div id="prof-form" class="w-full">
+                    <input id="prof-name" type="text" placeholder="Legal Name (or Alias)" class="w-full p-4 mb-3 bg-white/50 border border-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-black text-slate-800 placeholder:text-slate-400 backdrop-blur-md shadow-sm transition-shadow">
+                    
+                    <textarea id="prof-address" placeholder="Shipping Address (Where's the dumpster?)" rows="2" class="w-full p-4 mb-3 bg-white/50 border border-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-black text-slate-800 placeholder:text-slate-400 backdrop-blur-md shadow-sm transition-shadow resize-none"></textarea>
+                    
+                    <input id="prof-regret" type="text" placeholder="Your deepest regret" class="w-full p-4 mb-4 bg-white/50 border border-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-black text-slate-800 placeholder:text-slate-400 backdrop-blur-md shadow-sm transition-shadow">
+                    
+                    <label class="flex items-start gap-3 mb-6 text-sm text-slate-600 cursor-pointer group">
+                        <div class="relative flex items-center justify-center mt-0.5">
+                            <input type="checkbox" id="prof-soul" class="w-5 h-5 rounded-md border-slate-300 text-black focus:ring-black cursor-pointer appearance-none bg-white/50 border checked:bg-black checked:border-black transition-colors">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-white absolute pointer-events-none opacity-0 transition-opacity"></i>
+                        </div>
+                        <span class="leading-snug group-hover:text-black transition-colors">I agree to legally name my firstborn "NonSence.Co" and absolve this website of any crimes.</span>
+                    </label>
+
+                    <button onclick="submitProfile()" class="w-full py-4 bg-black text-white rounded-2xl font-medium shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex justify-center items-center gap-2">
+                        Surrender Data & Enter
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -379,6 +408,7 @@
         window.closePayment = closePayment;
         window.nextGateStep = nextGateStep;
         window.recordAnswer = recordAnswer;
+        window.submitProfile = submitProfile;
         window.finishGatekeeper = finishGatekeeper;
 
         // State
@@ -421,7 +451,8 @@
 
         async function checkUserStatus(user) {
             try {
-                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile');
+                // Fixed invalid document reference by providing 6 segments instead of 5
+                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
                 const docSnap = await getDoc(docRef);
                 
                 hideLoader();
@@ -445,7 +476,8 @@
         async function saveUserStatus(passed) {
             if (!currentUser || !db) return;
             try {
-                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile');
+                // Fixed invalid document reference by providing 6 segments instead of 5
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
                 await setDoc(docRef, { passed: passed });
             } catch (e) {
                 console.error("Firestore write error", e);
@@ -468,10 +500,13 @@
         }
 
         function showGateStep(stepId) {
-            ['gate-step-0', 'gate-step-1', 'gate-step-2', 'gate-rejected', 'gate-approved'].forEach(id => {
+            ['gate-step-0', 'gate-step-1', 'gate-step-2', 'gate-rejected', 'gate-approved', 'gate-step-profile'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(stepId).classList.remove('hidden');
+            
+            // Re-init icons if needed for the custom checkbox
+            if(stepId === 'gate-step-profile') lucide.createIcons();
         }
 
         function nextGateStep(step) {
@@ -484,13 +519,63 @@
                 nextGateStep(2);
             } else if (questionNum === 2) {
                 if (dumbScore >= 2) {
-                    saveUserStatus(true);
+                    // We don't save status yet. We wait until profile creation.
                     showGateStep('gate-approved');
                 } else {
                     saveUserStatus(false);
                     showGateStep('gate-rejected');
                 }
             }
+        }
+
+        async function submitProfile() {
+            const name = document.getElementById('prof-name').value.trim();
+            const address = document.getElementById('prof-address').value.trim();
+            const regret = document.getElementById('prof-regret').value.trim();
+            const soul = document.getElementById('prof-soul').checked;
+            const errorEl = document.getElementById('prof-error');
+
+            if (!name || !address) {
+                errorEl.textContent = "We need a name and address to ship you absolute garbage.";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (!soul) {
+                errorEl.textContent = "You must surrender your firstborn. It's strict company policy.";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            errorEl.classList.add('hidden');
+
+            // Show loading state inline
+            const formContainer = document.getElementById('prof-form');
+            formContainer.innerHTML = `
+                <div class="py-8 flex flex-col items-center">
+                    <div class="w-10 h-10 border-4 border-slate-200 border-t-black rounded-full animate-spin mb-4"></div>
+                    <p class="text-slate-600 font-medium">Harvesting personal data...</p>
+                </div>
+            `;
+
+            if (currentUser && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
+                    await setDoc(docRef, { 
+                        passed: true,
+                        name: name,
+                        address: address,
+                        regret: regret,
+                        soulSurrendered: true,
+                        timestamp: new Date().toISOString()
+                    });
+                } catch (e) {
+                    console.error("Firestore write error", e);
+                }
+            }
+            
+            // Add a slight delay for dramatic effect before entering
+            setTimeout(() => {
+                finishGatekeeper();
+            }, 1500);
         }
 
         function finishGatekeeper() {
