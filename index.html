@@ -233,12 +233,20 @@
                 </span>
             </div>
             
-            <button onclick="toggleCart(true)" class="relative glass-ultra p-3 rounded-full hover:bg-white/80 transition-colors shadow-sm active:scale-95 spring-transform">
-                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-black text-white text-[11px] font-bold rounded-full flex items-center justify-center ring-2 ring-[#f2f2f7] hidden transition-transform spring-transform">
-                    0
-                </span>
-            </button>
+            <div class="flex items-center gap-3">
+                <!-- User Profile Button -->
+                <button onclick="toggleProfile(true)" class="relative glass-ultra p-3 rounded-full hover:bg-white/80 transition-colors shadow-sm active:scale-95 spring-transform">
+                    <i data-lucide="user" class="w-5 h-5 text-slate-700"></i>
+                </button>
+                
+                <!-- Cart Button -->
+                <button onclick="toggleCart(true)" class="relative glass-ultra p-3 rounded-full hover:bg-white/80 transition-colors shadow-sm active:scale-95 spring-transform">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-700"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-black text-white text-[11px] font-bold rounded-full flex items-center justify-center ring-2 ring-[#f2f2f7] hidden transition-transform spring-transform">
+                        0
+                    </span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -264,6 +272,49 @@
             <!-- Products injected by JS -->
         </section>
     </main>
+
+    <!-- Profile View Modal -->
+    <div id="profile-modal" class="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 modal-hidden transition-opacity duration-500">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xl" onclick="toggleProfile(false)"></div>
+        
+        <div id="profile-content" class="relative w-full max-w-sm glass-ultra rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col modal-content-hidden fade-spring border border-white/60">
+            <div class="p-6 border-b border-black/5 bg-white/40 flex items-center justify-between">
+                <h3 class="text-2xl font-serif text-black">Victim Profile</h3>
+                <button onclick="toggleProfile(false)" class="p-2 bg-white/60 rounded-full hover:bg-white transition-colors active:scale-90 spring-transform">
+                    <i data-lucide="x" class="w-5 h-5 text-slate-600"></i>
+                </button>
+            </div>
+            
+            <div class="p-8 bg-white/40 flex-1 flex flex-col items-center text-center">
+                <div class="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center mb-4 shadow-inner border-[4px] border-white">
+                    <i data-lucide="user" class="w-8 h-8 text-slate-500"></i>
+                </div>
+                
+                <h4 id="display-name" class="text-xl font-bold text-black mb-1">Unknown Entity</h4>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-bold uppercase tracking-wider mb-6">
+                    <i data-lucide="flame" class="w-3.5 h-3.5"></i> Soul Forfeited
+                </div>
+
+                <div class="w-full text-left space-y-4 text-sm">
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white shadow-sm">
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">Shipping Dumpster</span>
+                        <p id="display-address" class="text-slate-700 font-medium">No address provided.</p>
+                    </div>
+                    
+                    <div class="bg-white/60 p-4 rounded-2xl border border-white shadow-sm">
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1">Deepest Regret</span>
+                        <p id="display-regret" class="text-slate-700 font-medium italic">"Nothing, I am perfect."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-white/60 border-t border-white/50">
+                <button onclick="resetIdentity()" class="w-full py-3.5 bg-red-50 text-red-600 border border-red-100 rounded-2xl font-medium hover:bg-red-100 transition-colors active:scale-95 spring-transform flex items-center justify-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reset Identity
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Terms Modal -->
     <div id="consent-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 modal-hidden transition-opacity duration-500">
@@ -392,7 +443,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         let auth, db, currentUser = null;
@@ -404,12 +455,14 @@
         window.toggleConsent = toggleConsent;
         window.acceptConsent = acceptConsent;
         window.toggleCart = toggleCart;
+        window.toggleProfile = toggleProfile;
         window.checkout = checkout;
         window.closePayment = closePayment;
         window.nextGateStep = nextGateStep;
         window.recordAnswer = recordAnswer;
         window.submitProfile = submitProfile;
         window.finishGatekeeper = finishGatekeeper;
+        window.resetIdentity = resetIdentity;
 
         // State
         let dumbScore = 0;
@@ -417,6 +470,7 @@
         let hasConsented = false;
         let pendingProduct = null;
         let toastTimeout;
+        let userProfile = null; // Store user details locally for the session
 
         // Init Firebase & Auth
         async function initFirebase() {
@@ -449,16 +503,24 @@
             }
         }
 
+        // Extremely robust check to guarantee we only ask once
         async function checkUserStatus(user) {
             try {
-                // Fixed invalid document reference by providing 6 segments instead of 5
                 const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
                 const docSnap = await getDoc(docRef);
+                
+                // Also check local storage backup just in case database read fails/is slow
+                const localBackup = localStorage.getItem('nonsense_profile_backup');
                 
                 hideLoader();
 
                 if (docSnap.exists() && docSnap.data().passed === true) {
-                    // Already passed previously!
+                    // Firebase confirms they passed!
+                    userProfile = docSnap.data();
+                    closeGatekeeper();
+                } else if (localBackup) {
+                    // Local backup confirms they passed!
+                    userProfile = JSON.parse(localBackup);
                     closeGatekeeper();
                 } else if (docSnap.exists() && docSnap.data().passed === false) {
                     // Blocked
@@ -476,7 +538,6 @@
         async function saveUserStatus(passed) {
             if (!currentUser || !db) return;
             try {
-                // Fixed invalid document reference by providing 6 segments instead of 5
                 const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
                 await setDoc(docRef, { passed: passed });
             } catch (e) {
@@ -484,9 +545,16 @@
             }
         }
 
+        // Bulletproof fallback so it doesn't bother you during testing
         function mockAuth() {
             hideLoader();
-            showGateStep('gate-step-0');
+            const localBackup = localStorage.getItem('nonsense_profile_backup');
+            if (localBackup) {
+                userProfile = JSON.parse(localBackup);
+                closeGatekeeper();
+            } else {
+                showGateStep('gate-step-0');
+            }
         }
 
         // Gatekeeper Navigation
@@ -505,7 +573,6 @@
             });
             document.getElementById(stepId).classList.remove('hidden');
             
-            // Re-init icons if needed for the custom checkbox
             if(stepId === 'gate-step-profile') lucide.createIcons();
         }
 
@@ -519,7 +586,6 @@
                 nextGateStep(2);
             } else if (questionNum === 2) {
                 if (dumbScore >= 2) {
-                    // We don't save status yet. We wait until profile creation.
                     showGateStep('gate-approved');
                 } else {
                     saveUserStatus(false);
@@ -547,7 +613,6 @@
             }
             errorEl.classList.add('hidden');
 
-            // Show loading state inline
             const formContainer = document.getElementById('prof-form');
             formContainer.innerHTML = `
                 <div class="py-8 flex flex-col items-center">
@@ -556,26 +621,33 @@
                 </div>
             `;
 
+            // Setup profile object
+            const profileData = { 
+                passed: true,
+                name: name,
+                address: address,
+                regret: regret || "Nothing, I am perfect.",
+                soulSurrendered: true,
+                timestamp: new Date().toISOString()
+            };
+
+            // Save locally immediately to guarantee no re-prompts
+            userProfile = profileData;
+            localStorage.setItem('nonsense_profile_backup', JSON.stringify(profileData));
+
+            // Save to Firebase
             if (currentUser && db) {
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
-                    await setDoc(docRef, { 
-                        passed: true,
-                        name: name,
-                        address: address,
-                        regret: regret,
-                        soulSurrendered: true,
-                        timestamp: new Date().toISOString()
-                    });
+                    await setDoc(docRef, profileData);
                 } catch (e) {
                     console.error("Firestore write error", e);
                 }
             }
             
-            // Add a slight delay for dramatic effect before entering
             setTimeout(() => {
                 finishGatekeeper();
-            }, 1500);
+            }, 1000);
         }
 
         function finishGatekeeper() {
@@ -588,6 +660,51 @@
             setTimeout(() => {
                 overlay.classList.add('hidden');
             }, 1000);
+        }
+
+
+        // --- PROFILE VIEW LOGIC ---
+        function toggleProfile(show) {
+            const modal = document.getElementById('profile-modal');
+            const content = document.getElementById('profile-content');
+            
+            if (show) {
+                // Populate data before showing
+                document.getElementById('display-name').textContent = userProfile?.name || "Unknown Entity";
+                document.getElementById('display-address').textContent = userProfile?.address || "No address provided.";
+                document.getElementById('display-regret').textContent = `"${userProfile?.regret || "Nothing, I am perfect."}"`;
+
+                modal.classList.remove('modal-hidden');
+                modal.classList.add('modal-visible');
+                setTimeout(() => {
+                    content.classList.remove('modal-content-hidden');
+                    content.classList.add('modal-content-visible');
+                }, 10);
+            } else {
+                content.classList.remove('modal-content-visible');
+                content.classList.add('modal-content-hidden');
+                setTimeout(() => {
+                    modal.classList.remove('modal-visible');
+                    modal.classList.add('modal-hidden');
+                }, 300);
+            }
+        }
+
+        async function resetIdentity() {
+            // Delete Local Storage
+            localStorage.removeItem('nonsense_profile_backup');
+            userProfile = null;
+
+            // Delete Firebase Document
+            if (currentUser && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data');
+                    await deleteDoc(docRef);
+                } catch(e) { console.error("Could not delete from DB", e); }
+            }
+            
+            // Hard reload the page
+            window.location.reload();
         }
 
 
@@ -666,7 +783,6 @@
             PRODUCTS.forEach(product => {
                 const noiseSvg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
                 
-                // Fixed layout: Removed absolute bottom positioning for "Tap for details" to prevent overlap with button.
                 const cardHTML = `
                     <div class="relative w-full aspect-square md:aspect-[4/5] max-w-sm mx-auto group perspective-1500 hover-scale-card spring-transform">
                         <div class="card-inner w-full h-full spring-transform preserve-3d cursor-pointer" onclick="flipCard(this)">
@@ -691,7 +807,6 @@
                                     <div class="absolute -bottom-6 w-32 md:w-40 h-8 bg-black/20 blur-xl rounded-full ${product.glow} spring-transition"></div>
                                 </div>
 
-                                <!-- Action Stack (No overlap fix) -->
                                 <div class="mt-auto pt-2 w-full flex flex-col items-center gap-3">
                                     <button onclick="handleBuyClick(event, ${product.id})" class="relative z-20 w-full max-w-[220px] bg-gradient-to-b from-neutral-800 to-black text-white px-6 py-4 rounded-full flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 spring-transform border border-neutral-700/50 backdrop-blur-xl">
                                         <i data-lucide="shopping-cart" class="w-5 h-5 text-neutral-300 pointer-events-none"></i>
