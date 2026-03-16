@@ -277,7 +277,28 @@
                 </div>
             </div>
 
-            <!-- Step 3: Test Failed (Rejected) -->
+            <!-- Step 3: Question 3 -->
+            <div id="gate-step-3" class="w-full flex flex-col hidden">
+                <span class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-2">Question 3</span>
+                <h3 class="text-2xl font-serif text-black mb-8 leading-tight">2 + 2 = ?</h3>
+                
+                <div class="flex flex-col gap-3 w-full">
+                    <button onclick="recordAnswer(3, 0)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        A) 4
+                    </button>
+                    <button onclick="recordAnswer(3, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        B) Fish
+                    </button>
+                    <button onclick="recordAnswer(3, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        C) Windows XP
+                    </button>
+                    <button onclick="recordAnswer(3, 1)" class="w-full p-4 bg-white/50 border border-white hover:bg-white rounded-2xl text-left font-medium text-slate-700 transition-all active:scale-95">
+                        D) Purple
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Test Failed (Rejected) -->
             <div id="gate-rejected" class="w-full flex flex-col items-center hidden">
                 <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6">
                     <i data-lucide="shield-off" class="w-8 h-8"></i>
@@ -347,14 +368,21 @@
         <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
             
             <!-- Logo -->
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-black to-slate-800 text-white flex items-center justify-center font-serif italic font-bold shadow-lg">
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="handleLogoClick()">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-black to-slate-800 text-white flex items-center justify-center font-serif italic font-bold shadow-lg group-hover:scale-105 transition-transform">
                     N
                 </div>
                 <span id="header-title" class="font-medium tracking-tight opacity-0 md:opacity-100 transition-opacity duration-500">
                     NonSence.Co
                 </span>
             </div>
+
+            <!-- Navigation -->
+            <nav class="hidden md:flex items-center gap-8 glass-ultra px-6 py-2 rounded-full">
+                <a href="#" class="text-sm font-medium text-slate-600 hover:text-black transition-colors">Home</a>
+                <a href="#product-grid" class="text-sm font-medium text-slate-600 hover:text-black transition-colors">Products</a>
+                <a href="#footer" class="text-sm font-medium text-slate-600 hover:text-black transition-colors">About</a>
+            </nav>
             
             <!-- Actions -->
             <div class="flex items-center gap-3">
@@ -402,9 +430,24 @@
         </section>
         
         <!-- Footer -->
-        <footer class="w-full text-center py-12 text-slate-400 text-sm font-light border-t border-slate-200 mt-12">
-            <p>© 2026 NonSence.Co Global Holdings.</p>
-            <p class="mt-2 text-xs opacity-50">By scrolling down this far, you agree to buy something.</p>
+        <footer id="footer" class="w-full text-center py-12 text-slate-500 text-sm font-light border-t border-slate-200 mt-12 bg-white/40 backdrop-blur-xl">
+            <div class="max-w-4xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
+                <div class="flex flex-wrap justify-center gap-6 font-medium">
+                    <a href="#" class="hover:text-black transition-colors">Terms of Stupidity</a>
+                    <a href="#" class="hover:text-black transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-black transition-colors">Contact</a>
+                    <a href="#" class="hover:text-black transition-colors text-red-500">Report Intelligence</a>
+                </div>
+                <div class="flex flex-col items-center sm:items-end gap-3">
+                    <span class="font-medium text-slate-600 uppercase tracking-widest text-xs">Share your stupidity:</span>
+                    <div class="flex gap-3">
+                        <button onclick="shareApp('twitter')" class="p-2.5 bg-white border border-slate-200 shadow-sm rounded-full hover:scale-110 hover:text-blue-500 transition-all active:scale-95"><i data-lucide="twitter" class="w-4 h-4"></i></button>
+                        <button onclick="shareApp('whatsapp')" class="p-2.5 bg-white border border-slate-200 shadow-sm rounded-full hover:scale-110 hover:text-green-500 transition-all active:scale-95"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            </div>
+            <p class="font-medium text-slate-900">© 2026 NonSence.Co Global Holdings.</p>
+            <p class="mt-2 text-xs opacity-60">By scrolling down this far, you agree to buy something.</p>
         </footer>
     </main>
 
@@ -641,9 +684,12 @@
         window.submitProfile = submitProfile;
         window.finishGatekeeper = finishGatekeeper;
         window.resetIdentity = resetIdentity;
+        window.handleLogoClick = handleLogoClick;
+        window.shareApp = shareApp;
 
         // Session & State Management
         let dumbScore = 0;
+        let logoClicks = 0;
         let cart = JSON.parse(localStorage.getItem('nonsense_cart') || '[]'); 
         let hasConsented = false;
         let pendingProduct = null;
@@ -743,7 +789,7 @@
         }
 
         function showGateStep(stepId) {
-            ['gate-step-0', 'gate-step-1', 'gate-step-2', 'gate-rejected', 'gate-approved', 'gate-step-profile'].forEach(id => {
+            ['gate-step-0', 'gate-step-1', 'gate-step-2', 'gate-step-3', 'gate-rejected', 'gate-approved', 'gate-step-profile'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(stepId).classList.remove('hidden');
@@ -760,6 +806,8 @@
             if (questionNum === 1) {
                 nextGateStep(2);
             } else if (questionNum === 2) {
+                nextGateStep(3);
+            } else if (questionNum === 3) {
                 if (dumbScore >= 2) {
                     showGateStep('gate-approved');
                 } else {
@@ -877,7 +925,28 @@
         }
 
         // ---------------------------------------------------------------------
-        // ABSURD PRODUCT DATABASE (102 UNIQUE ITEMS)
+        // EASTER EGG & SHARE METHODS
+        // ---------------------------------------------------------------------
+        function handleLogoClick() {
+            logoClicks++;
+            if(logoClicks >= 5) {
+                showToast("Developer detected. Please stop improving this nonsense.");
+                logoClicks = 0;
+            }
+        }
+
+        function shareApp(platform) {
+            const text = "I just proved I have zero brain cells at NonSence.Co! Come buy artisanal garbage with me.";
+            const url = window.location.href;
+            if(platform === 'twitter') {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            } else if(platform === 'whatsapp') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}%20${encodeURIComponent(url)}`, '_blank');
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // ABSURD PRODUCT DATABASE (103 UNIQUE ITEMS)
         // ---------------------------------------------------------------------
         const PRODUCTS = [
             {
@@ -1279,6 +1348,19 @@
                 imageUrl: "https://picsum.photos/seed/nonsense50/600/600", emoji: "⏹️", glow: "shadow-indigo-500/40", stock: "Paradox",
                 metadata: { weight: "2 oz", material: "Wood", origin: "Math Class" },
                 reviews: [{ r: 1, t: "This is a square." }, { r: 5, t: "Mind blown." }]
+            },
+            {
+                id: 0, name: "Sebin<br/>Vijoy", price: 99999.99,
+                shortDesc: "Black men with 5'11 feet.",
+                longDesc: "Highly maintainable. Mostly just stands there contemplating life. Requires daily feeding and occasional Wi-Fi access to function properly.",
+                imageUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='black'/%3E%3C/svg%3E",
+                emoji: "🧍🏿‍♂️", glow: "shadow-slate-800/40", stock: "Only 1 in stock",
+                metadata: { weight: "75 kg", material: "Organic matter", origin: "Kerala" },
+                reviews: [
+                    { r: 5, t: "Highly Efficent is Gok", author: "Akshay Cibi" }, 
+                    { r: 4, t: "less maintanence", author: "abhinav das" },
+                    { r: 2, t: "Eats all my snacks but writes good code.", author: "Anonymous" }
+                ]
             },
             {
                 id: 51, name: "Diet<br/>Oxygen", price: 30.00,
@@ -1714,9 +1796,13 @@
                 let reviewsHtml = '';
                 product.reviews.forEach(r => {
                     const stars = '★'.repeat(r.r) + '☆'.repeat(5 - r.r);
+                    const authorName = r.author ? r.author : "Verified Victim";
                     reviewsHtml += `
                         <div class="bg-black/20 p-3 rounded-xl mb-2 backdrop-blur-sm border border-white/5">
-                            <div class="text-yellow-400 text-xs mb-1">${stars}</div>
+                            <div class="flex justify-between items-center mb-1">
+                                <div class="text-yellow-400 text-xs">${stars}</div>
+                                <div class="text-[10px] text-slate-400 uppercase tracking-widest truncate ml-2">${authorName}</div>
+                            </div>
                             <p class="text-slate-300 text-xs italic">"${r.t}"</p>
                         </div>
                     `;
