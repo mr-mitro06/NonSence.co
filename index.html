@@ -207,6 +207,18 @@
         .product-image {
             transition: opacity 0.3s ease;
         }
+
+        /* Black Market Icon Glitch Animation */
+        @keyframes icon-glitch {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1.1) rotate(-10deg); filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.8)); }
+            40% { transform: scale(1.1) rotate(10deg); filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.8)); }
+            60% { transform: scale(1.1) rotate(-5deg); filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.8)); }
+            80% { transform: scale(1.1) rotate(5deg); filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.8)); }
+        }
+        .group:hover .animate-icon-glitch {
+            animation: icon-glitch 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
     </style>
 </head>
 <body class="text-slate-900 selection:bg-black selection:text-white pb-20 overflow-x-hidden">
@@ -386,6 +398,20 @@
             
             <!-- Actions -->
             <div class="flex items-center gap-3">
+                <!-- The Pit (Black Market) Link -->
+                <a href="https://mr-mitro06.github.io/NonSenseCo/bidding_war.html" target="_blank" title="Access The Pit" class="relative group glass-ultra p-3 rounded-full hover:bg-black transition-all duration-500 shadow-sm active:scale-95 spring-transform overflow-visible hover:border-red-900 hover:shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                    <!-- Dark background reveal -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-red-950 to-black rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+                    <!-- Animated Icon -->
+                    <i data-lucide="skull" class="w-5 h-5 text-slate-700 group-hover:text-red-500 relative z-10 transition-colors duration-300 animate-icon-glitch"></i>
+                    
+                    <!-- Floating Tooltip -->
+                    <span class="absolute top-full mt-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500 bg-black text-red-500 border border-red-900 text-[10px] uppercase tracking-widest font-mono font-bold px-3 py-1.5 rounded shadow-lg pointer-events-none whitespace-nowrap translate-y-[-10px] group-hover:translate-y-0 z-50 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                        The Pit
+                    </span>
+                </a>
+
                 <!-- User Profile Modal Toggle -->
                 <button onclick="toggleProfile(true)" class="relative glass-ultra p-3 rounded-full hover:bg-white/80 transition-colors shadow-sm active:scale-95 spring-transform">
                     <i data-lucide="user" class="w-5 h-5 text-slate-700"></i>
@@ -436,7 +462,9 @@
                     <a href="#" class="hover:text-black transition-colors">Terms of Stupidity</a>
                     <a href="#" class="hover:text-black transition-colors">Privacy Policy</a>
                     <a href="#" class="hover:text-black transition-colors">Contact</a>
-                    <a href="#" class="hover:text-black transition-colors text-red-500">Report Intelligence</a>
+                    <a href="https://mr-mitro06.github.io/NonSenseCo/bidding_war.html" target="_blank" class="hover:text-red-700 transition-colors text-red-500 flex items-center gap-1 group">
+                        <i data-lucide="skull" class="w-3 h-3 group-hover:animate-pulse"></i> Report Intelligence
+                    </a>
                 </div>
                 <div class="flex flex-col items-center sm:items-end gap-3">
                     <span class="font-medium text-slate-600 uppercase tracking-widest text-xs">Share your stupidity:</span>
@@ -1350,12 +1378,12 @@
                 reviews: [{ r: 1, t: "This is a square." }, { r: 5, t: "Mind blown." }]
             },
             {
-                id: 0, name: "Sebin<br/>Vijoy", price: 199999.99,
-                shortDesc: "Black man with 5'11 feet.",
+                id: 0, name: "Sebin<br/>Vijoy", price: 99999.99,
+                shortDesc: "Black men with 5'11 feet.",
                 longDesc: "Highly maintainable. Mostly just stands there contemplating life. Requires daily feeding and occasional Wi-Fi access to function properly.",
                 imageUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='black'/%3E%3C/svg%3E",
                 emoji: "🧍🏿‍♂️", glow: "shadow-slate-800/40", stock: "Only 1 in stock",
-                metadata: { weight: "60 kg", material: "Organic matter", origin: "Kerala" },
+                metadata: { weight: "75 kg", material: "Organic matter", origin: "Kerala" },
                 reviews: [
                     { r: 5, t: "Highly Efficent is Gok", author: "Akshay Cibi" }, 
                     { r: 4, t: "less maintanence", author: "abhinav das" },
